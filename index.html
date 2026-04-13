@@ -125,6 +125,10 @@ li{
 <option value="protein">Chất đạm</option>
 </select>
 <button class="addBtn" onclick="addFood()">Thêm món</button>
+  <br><br>
+<button onclick="exportData()">📥 Xuất dữ liệu</button>
+<button onclick="importData()">📤 Nhập dữ liệu</button>
+<input type="file" id="fileInput" hidden>
 </section>
 
 <section>
@@ -185,3 +189,30 @@ render();
 </script>
 </body>
 </html>
+// ===== EXPORT DATA =====
+function exportData(){
+ const data = JSON.stringify(foods);
+ const blob = new Blob([data], {type:"application/json"});
+ const a = document.createElement("a");
+ a.href = URL.createObjectURL(blob);
+ a.download = "meal-data.json";
+ a.click();
+}
+
+// ===== IMPORT DATA =====
+function importData(){
+ document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change", function(e){
+ const file = e.target.files[0];
+ if(!file) return;
+ const reader = new FileReader();
+ reader.onload = function(){
+   foods = JSON.parse(reader.result);
+   save();
+   render();
+   alert("Đã khôi phục dữ liệu 🎉");
+ };
+ reader.readAsText(file);
+});

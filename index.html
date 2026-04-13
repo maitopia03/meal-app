@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meal Planner</title>
+<link href="https://fonts.cdnfonts.com/css/the-untold-story" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+
+body{
+  font-family:'The Untold Story', Calibri, sans-serif;
+  background:#cfe8ff;
+  margin:0;
+  padding:12px;
+}
+
+/* container full width mobile */
+.container{
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  background:#ffe6f2;
+  padding:18px;
+  border-radius:22px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+
+h1{
+  font-size:26px;
+  margin-top:6px;
+}
+
+h2{
+  font-size:20px;
+}
+
+section{margin-top:22px}
+
+/* input full width mobile */
+input,select{
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #aaa;
+  width:100%;
+  margin-bottom:8px;
+  font-size:16px;
+}
+
+/* buttons full width mobile */
+.randBtn,.addBtn{
+  width:100%;
+  padding:12px;
+  font-size:16px;
+  margin-top:4px;
+}
+
+.randBtn{background:#4da6ff;color:#fff}
+.addBtn{background:#2ecc71;color:#fff}
+
+/* small action buttons */
+.editBtn,.delBtn{
+  padding:2px 6px;
+  font-size:11px;
+  border-radius:7px;
+  white-space:nowrap;
+}
+.editBtn{background:#8ecbff;color:#fff}
+.delBtn{background:#ff6b6b;color:#fff}
+
+.meal{
+  text-align:center;
+  font-size:22px;
+  margin-top:14px;
+  line-height:1.4;
+}
+
+/* MOBILE: 1 column */
+.col3{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.card{
+  background:#fff5fb;
+  padding:14px;
+  border-radius:16px;
+}
+
+ul{padding-left:18px}
+
+li{
+  margin:6px 0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:nowrap;
+  font-size:15px;
+}
+
+/* DESKTOP AUTO SWITCH */
+@media (min-width:768px){
+  .col3{grid-template-columns:1fr 1fr 1fr}
+  .randBtn,.addBtn{width:auto}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🍱 Meal Planner</h1>
+
+<section>
+<h2>1️⃣ Hôm nay ăn gì?</h2>
+<button class="randBtn" onclick="randomMeal()">🎲 Đoán xem <3</button>
+<div class="meal" id="meal"></div>
+</section>
+
+<section>
+<h2>2️⃣ Để thực đơn thêm đa dạng</h2>
+<input id="foodName" placeholder="Tên món">
+<select id="foodGroup">
+<option value="carb">Tinh bột</option>
+<option value="veggie">Chất xơ & Vitamin</option>
+<option value="protein">Chất đạm</option>
+</select>
+<button class="addBtn" onclick="addFood()">Thêm món</button>
+</section>
+
+<section>
+<h2>3️⃣ Thiên đường ẩm thực của công chúa</h2>
+<div class="col3">
+<div class="card"><h3>Tinh bột</h3><ul id="carbList"></ul></div>
+<div class="card"><h3>Chất xơ & Vitamin</h3><ul id="vegList"></ul></div>
+<div class="card"><h3>Chất đạm</h3><ul id="proList"></ul></div>
+</div>
+</section>
+</div>
+
+<script>
+const foodName=document.getElementById('foodName');
+const foodGroup=document.getElementById('foodGroup');
+const meal=document.getElementById('meal');
+const carbList=document.getElementById('carbList');
+const vegList=document.getElementById('vegList');
+const proList=document.getElementById('proList');
+
+let foods=JSON.parse(localStorage.getItem('foods'))||[
+{name:'Cơm',group:'carb'},
+{name:'Khoai luộc',group:'carb'},
+{name:'Rau muống xào',group:'veggie'},
+{name:'Canh bí',group:'veggie'},
+{name:'Thịt luộc',group:'protein'},
+{name:'Cá chiên',group:'protein'}];
+
+function save(){localStorage.setItem('foods',JSON.stringify(foods))}
+function sortFoods(){foods.sort((a,b)=>a.name.localeCompare(b.name,'vi'))}
+
+function render(){
+ sortFoods();
+ carbList.innerHTML='';vegList.innerHTML='';proList.innerHTML='';
+ foods.forEach((f,i)=>{
+  const li=`<li>${f.name} <button class='editBtn' onclick='editFood(${i})'>✏️</button> <button class='delBtn' onclick='deleteFood(${i})'>x</button></li>`;
+  if(f.group=='carb') carbList.innerHTML+=li;
+  if(f.group=='veggie') vegList.innerHTML+=li;
+  if(f.group=='protein') proList.innerHTML+=li;
+ });
+ save();
+}
+
+function addFood(){
+ const name=foodName.value.trim();
+ const group=foodGroup.value;
+ if(!name){alert('Nhập tên món');return}
+ foods.push({name,group});
+ foodName.value='';
+ render();
+}
+function deleteFood(i){foods.splice(i,1);render()}
+function editFood(i){const n=prompt('Sửa tên món',foods[i].name); if(n){foods[i].name=n;render()}}
+function randomFrom(g){const arr=foods.filter(f=>f.group==g); if(arr.length==0) return 'Chưa có'; return arr[Math.floor(Math.random()*arr.length)].name}
+function randomMeal(){meal.innerText=`🥩 ${randomFrom('protein')} | 🥦 ${randomFrom('veggie')} | 🍚 ${randomFrom('carb')}`}
+
+render();
+</script>
+</body>
+</html>
+
+Điều chỉnh lại cho phù hợp giao diện điện thoại iphone

@@ -76,7 +76,14 @@ button{
   box-shadow:0 4px 10px rgba(0,0,0,.15);
   transition:.25s;
 }
-
+/* ===== SMALL BUTTON (Excel buttons) ===== */
+.smallBtn{
+  padding:6px 12px;
+  font-size:13px;
+  width:auto !important;
+  margin-right:6px;
+  margin-top:6px;
+}
 button:hover{
   background:#86c5ff;
   transform:translateY(-1px);
@@ -163,8 +170,8 @@ li{
 </select>
 <button class="addBtn" onclick="addFood()">Thêm món</button>
 <br><br>
-<button class="randBtn" onclick="exportExcel()">📥 Xuất Excel</button>
-<button class="randBtn" onclick="importExcel()">📤 Nhập Excel</button>
+<button class="smallBtn" onclick="exportExcel()">📥 Xuất Excel</button>
+<button class="smallBtn" onclick="importExcel()">📤 Nhập Excel</button>
 <input type="file" id="fileInput" accept=".xlsx" hidden>
 </section>
 

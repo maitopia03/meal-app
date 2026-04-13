@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+<title>Meal Planner</title>
+<!-- ===== iOS PWA SETTINGS ===== -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Meal Planner">
+<meta name="theme-color" content="#ffe6f2">
+
+<!-- iPhone icon -->
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAA...">
+<link rel="icon" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
+<rect width='200' height='200' rx='40' fill='%23ffe6f2'/>
+<text x='50%' y='54%' text-anchor='middle' font-size='90'>🍱</text>
+</svg>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meal Planner</title>
@@ -282,6 +296,10 @@ document.getElementById("fileInput").addEventListener("change", function(e){
 
   reader.readAsArrayBuffer(file);
 });
+// PWA standalone detect
+if (window.navigator.standalone === true) {
+  document.body.style.paddingTop = "10px";
+}
 </script>
 </body>
 </html>

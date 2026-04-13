@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meal Planner</title>
 <link href="https://fonts.cdnfonts.com/css/the-untold-story" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box}
 
@@ -47,16 +48,38 @@ input,select{
   font-size:16px;
 }
 
-/* buttons full width mobile */
-.randBtn,.addBtn{
-  width:100%;
-  padding:12px;
+/* ===== BABY BLUE PILL BUTTON ===== */
+
+button{
+  border:none;
+  cursor:pointer;
+  font-family:'The Untold Story', Calibri, sans-serif;
   font-size:16px;
-  margin-top:4px;
+  padding:12px 18px;
+  border-radius:999px;
+  background:#9ed0ff;
+  color:black;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);
+  transition:.25s;
 }
 
-.randBtn{background:#4da6ff;color:#fff}
-.addBtn{background:#2ecc71;color:#fff}
+button:hover{
+  background:#86c5ff;
+  transform:translateY(-1px);
+}
+
+button:active{
+  transform:scale(.97);
+}
+
+.randBtn,.addBtn{
+  width:100%;
+  margin-top:6px;
+}
+
+@media (min-width:768px){
+  .randBtn,.addBtn{width:auto}
+}
 
 /* small action buttons */
 .editBtn,.delBtn{
@@ -125,10 +148,10 @@ li{
 <option value="protein">Chất đạm</option>
 </select>
 <button class="addBtn" onclick="addFood()">Thêm món</button>
-  <br><br>
-<button onclick="exportData()">📥 Xuất dữ liệu</button>
-<button onclick="importData()">📤 Nhập dữ liệu</button>
-<input type="file" id="fileInput" hidden>
+<br><br>
+<button class="randBtn" onclick="exportExcel()">📥 Xuất Excel</button>
+<button class="randBtn" onclick="importExcel()">📤 Nhập Excel</button>
+<input type="file" id="fileInput" accept=".xlsx" hidden>
 </section>
 
 <section>
@@ -186,9 +209,6 @@ function randomFrom(g){const arr=foods.filter(f=>f.group==g); if(arr.length==0) 
 function randomMeal(){meal.innerText=`🥩 ${randomFrom('protein')} | 🥦 ${randomFrom('veggie')} | 🍚 ${randomFrom('carb')}`}
 
 render();
-</script>
-</body>
-</html>
 // ===== EXPORT DATA =====
 function exportData(){
  const data = JSON.stringify(foods);
@@ -216,3 +236,52 @@ document.getElementById("fileInput").addEventListener("change", function(e){
  };
  reader.readAsText(file);
 });
+// ===== EXPORT EXCEL =====
+function exportExcel(){
+
+  const data = foods.map(f => ({
+    "Tên món": f.name,
+    "Nhóm": f.group
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Meals");
+
+  XLSX.writeFile(wb, "Meal_Data.xlsx");
+}
+
+
+// ===== IMPORT EXCEL =====
+function importExcel(){
+  document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change", function(e){
+
+  const file = e.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(evt){
+    const data = new Uint8Array(evt.target.result);
+    const workbook = XLSX.read(data, {type:"array"});
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet);
+
+    foods = rows.map(r => ({
+      name: r["Tên món"],
+      group: r["Nhóm"]
+    }));
+
+    save();
+    render();
+    alert("Đã nhập dữ liệu từ Excel 🎉");
+  };
+
+  reader.readAsArrayBuffer(file);
+});
+</script>
+</body>
+</html>
